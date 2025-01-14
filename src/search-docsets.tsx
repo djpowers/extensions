@@ -61,7 +61,7 @@ function DocItem({ doc }: { doc: Doc }): JSX.Element {
         fallback: Icon.Book,
       }}
       subtitle={doc.version}
-      keywords={doc.alias ? [doc.alias] : null}
+      keywords={doc.alias ? [doc.alias] : undefined}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
