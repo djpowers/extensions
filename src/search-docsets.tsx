@@ -8,8 +8,10 @@ export default function SearchDocsets(): JSX.Element {
   const { data, isLoading } = useFetch<Doc[]>(`https://devdocs.io/docs/docs.json`, {});
   const defaultDocs = { docs: ["css", "html", "http", "javascript", "dom"].join("/") };
   const { value: docSlugsStorage } = useLocalStorage("docs", JSON.stringify(defaultDocs));
+  const [searchText, setSearchText] = useState("");
 
   const [documentations, setDocumentations] = useState<[Doc[], Doc[]]>([[], []]);
+  const [filteredDocs, filterDocs] = useState(documentations);
 
   useEffect(() => {
     const docSlugsObject = JSON.parse(docSlugsStorage || "{}");
@@ -30,9 +32,25 @@ export default function SearchDocsets(): JSX.Element {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    filterDocs([
+      documentations[0].filter((item) => item.alias && item.alias === searchText),
+      documentations[1].filter((item) => item.alias && item.alias === searchText),
+    ]);
+  }, [searchText]);
+
   return (
-    <List isLoading={isLoading}>
-      {documentations[0].length > 0 && (
+    <List isLoading={isLoading} filtering={true} onSearchTextChange={setSearchText}>
+      {((filteredDocs[0].length > 0 || filteredDocs[1].length) > 0 && (
+        <>
+          <List.Section title="Preferred">
+            {filteredDocs[0]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
+          </List.Section>
+          <List.Section title="Available">
+            {filteredDocs[1]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
+          </List.Section>
+        </>
+      )) || (
         <>
           <List.Section title="Preferred">
             {documentations[0]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
