@@ -50,16 +50,17 @@ export default function SearchDocsets(): JSX.Element {
             {filteredDocs[1]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
           </List.Section>
         </>
-      )) || (
-        <>
-          <List.Section title="Preferred">
-            {documentations[0]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
-          </List.Section>
-          <List.Section title="Available">
-            {documentations[1]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
-          </List.Section>
-        </>
-      )}
+      )) ||
+        (documentations[0].length > 0 && documentations[1].length && (
+          <>
+            <List.Section title="Preferred">
+              {documentations[0]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
+            </List.Section>
+            <List.Section title="Available">
+              {documentations[1]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
+            </List.Section>
+          </>
+        ))}
     </List>
   );
 }
