@@ -34,6 +34,7 @@ export default function SearchDocsets(): JSX.Element {
 
   useEffect(() => {
     filterDocs([
+      // return exact match if alias is used
       documentations[0].filter((item) => item.alias && item.alias === searchText),
       documentations[1].filter((item) => item.alias && item.alias === searchText),
     ]);
@@ -41,27 +42,18 @@ export default function SearchDocsets(): JSX.Element {
 
   return (
     <List isLoading={isLoading} filtering={true} onSearchTextChange={setSearchText}>
-      {((filteredDocs[0].length > 0 || filteredDocs[1].length) > 0 && (
-        <>
-          <List.Section title="Preferred">
-            {filteredDocs[0]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
-          </List.Section>
-          <List.Section title="Available">
-            {filteredDocs[1]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
-          </List.Section>
-        </>
-      )) ||
-        (documentations[0].length > 0 && documentations[1].length && (
-          <>
-            <List.Section title="Preferred">
-              {documentations[0]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
-            </List.Section>
-            <List.Section title="Available">
-              {documentations[1]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}
-            </List.Section>
-          </>
-        ))}
+      {((filteredDocs[0].length > 0 || filteredDocs[1].length) > 0 && DocumentationSection(filteredDocs)) ||
+        (documentations[0].length > 0 && documentations[1].length && DocumentationSection(documentations))}
     </List>
+  );
+}
+
+function DocumentationSection(docs: [Doc[], Doc[]]): JSX.Element {
+  return (
+    <>
+      <List.Section title="Preferred">{docs[0]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}</List.Section>
+      <List.Section title="Available">{docs[1]?.map((doc) => <DocItem key={doc.slug} doc={doc} />)}</List.Section>
+    </>
   );
 }
 
